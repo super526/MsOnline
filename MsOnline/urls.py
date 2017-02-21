@@ -1,3 +1,4 @@
+# _*_ encoding:utf-8 _*_
 """MsOnline URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -17,9 +18,12 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.generic import TemplateView
+from django.views.static import serve
 import xadmin
+from organization.views import OrgView
+from users.views import LoginView, RegisterView,ActiveUserView,ForgetPwdView,ResetPwdView,ModifyPwdView
+from MsOnline.settings import MEDIA_ROOT
 
-from users.views import LoginView, RegisterView,ActiveUserView
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
@@ -27,6 +31,18 @@ urlpatterns = [
     url('^login/$', LoginView.as_view(), name="login"),
     url('^register/$', RegisterView.as_view(), name="register"),
     url(r'^captcha/', include('captcha.urls')),
-    url(r'^active/(?P<active_code>.*)/$',ActiveUserView.as_view(),name="user_active"),
+    url(r'^active/(?P<active_code>.*)/$', ActiveUserView.as_view(), name="user_active"),
+    url(r'^forget/$', ForgetPwdView.as_view(), name="forget_pwd"),
+    url(r'^reset/(?P<active_code>.*)/$', ResetPwdView.as_view(), name="reset_pwd"),
+    url(r'^modify_pwd/$', ModifyPwdView.as_view(), name="modify_pwd"),
+    #课程机构Org模块url配置-->完成url的分发
+    url(r'^org/', include('organization.urls',namespace="org")),
+    #课程Course模块url配置-->完成url的分发
+    url(r'^course/', include('courses.urls',namespace="course")),
+    # 配置上传文件的访问处理函数
+    url(r'^media/(?P<path>.*)$', serve,{"document_root":MEDIA_ROOT}),
+
+
+
 
 ]

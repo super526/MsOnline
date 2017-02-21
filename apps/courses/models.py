@@ -6,9 +6,11 @@ from django.db import models
 
 
 # Create your models here.
+from organization.models import CourseOrg
 
 
 class Course(models.Model):
+    course_org = models.ForeignKey(CourseOrg,verbose_name=u"课程机构",null=True)
     name = models.CharField(max_length=50, verbose_name=u"课程名")
     desc = models.CharField(max_length=300, verbose_name=u"课程描述")
     detail = models.TextField(verbose_name=u"课程详情")
