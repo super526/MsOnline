@@ -12,8 +12,36 @@
     {% block custom_css %}{% endblock %}
     <script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
     <script src="{% static 'js/jquery-migrate-1.2.1.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/selectUi.js' %}" type='text/javascript'></script>
+    <script src="{% static 'js/deco-common.js' %}" type='text/javascript'></script>
+    <script type="text/javascript" src="{% static 'js/plugins/laydate/laydate.js' %}"></script>
+    <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
+    <script src="{% static 'js/plugins/queryCity/js/public.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/unslider.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/plugins/jquery.scrollLoading.js' %}"  type="text/javascript"></script>
+    <script src="{% static 'js/deco-common.js' %}"  type="text/javascript"></script>
+    <script type="text/javascript" >
+        $(function(){
+            $('#jsStayBtn').on('click', function(){
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url:"/org/add_ask/",
+                    data:$('#jsStayForm').serialize(),
+                    async: true,
+                    success: function(data) {
+                        if(data.status == 'success'){
+                            $('#jsStayForm')[0].reset();
+                            alert("提交成功")
+                        }else if(data.status == 'fail'){
+                            $('#jsCompanyTips').html(data.msg)
+                        }
+                    },
+                });
+            });
+        })
+    </script>
     {% block custom_js %}{% endblock %}
-
 </head>
 <body>
 
@@ -31,7 +59,7 @@
 
             <div class="middle">
                 <div class="wp">
-                    <a href="index.html"><img class="fl" src="../images/logo.jpg"/></a>
+                    <a href="index.html"><img class="fl" src="{% static 'images/logo.jpg' %}"/></a>
                     <div class="searchbox fr">
                         <div class="selectContainer fl">
                             <span class="selectOption" id="jsSelectOption" data-value="course">
@@ -44,7 +72,7 @@
                             </ul>
                         </div>
                         <input id="search_keywords" class="fl" type="text" value="" placeholder="请输入搜索内容"/>
-                        <img class="search_btn fr" id="jsSearchBtn" src="../images/search_btn.png"/>
+                        <img class="search_btn fr" id="jsSearchBtn" src="{% static 'images/search_btn.png' %}"/>
                     </div>
                 </div>
             </div>
@@ -57,7 +85,7 @@
 							<li ><a href="{% url 'index' %}">首页</a></li>
 							<li >
 								<a href="{% url 'course:course_list' %}">
-									公开课<img class="hot" src="../images/nav_hot.png">
+									公开课<img class="hot" src="{% static 'images/nav_hot.png' %}">
 								</a>
 							</li>
 							<li >
@@ -76,22 +104,21 @@
 <section>
         <div class="wp">
             <ul  class="crumbs">
-                <li><a href="index.html">首页</a>></li>
+                <li><a href="{% url 'index' %}">首页</a>></li>
                 <li>课程机构</li>
             </ul>
         </div>
     </section>
 {% endblock %}
 {% block content %}
-
 {% endblock %}
 <footer>
 		<div class="footer">
 			<div class="wp">
 				<ul class="cont">
-					<li class="logo"><a href=""><img src="../images/footlogo.png"/></a></li>
-					<li class="code"><img src="../images/code.jpg"/><p class="center">扫描关注微信</p></li>
-					<li class="third"><img class="fl" src="../images/tell.png"/><p class="tell">33333333</p><p class="time">周一至周日 9:00-18:00</p></li>
+					<li class="logo"><a href=""><img src="{% static 'images/footlogo.png' %}"/></a></li>
+					<li class="code"><img src="{% static 'images/code.jpg' %}"/><p class="center">扫描关注微信</p></li>
+					<li class="third"><img class="fl" src="{% static 'images/tell.png' %}"/><p class="tell">33333333</p><p class="time">周一至周日 9:00-18:00</p></li>
 				</ul>
 
 			</div>
@@ -102,7 +129,6 @@
 			</div>
 		</div>
 	</footer>
-
 <section>
     <ul class="sidebar">
         <li class="qq">
@@ -111,37 +137,5 @@
         <li class="totop"></li>
     </ul>
 </section>
-<script src="{% static 'js/selectUi.js' %}" type='text/javascript'></script>
-<script src="{% static 'js/deco-common.js' %}" type='text/javascript'></script>
-<script type="text/javascript" src="{% static 'js/plugins/laydate/laydate.js' %}"></script>
-<script src="{% static 'js/plugins/layer/layer.js' %}"></script>
-<script src="{% static 'js/plugins/queryCity/js/public.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/unslider.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/plugins/jquery.scrollLoading.js' %}"  type="text/javascript"></script>
-<script src="{% static 'js/deco-common.js' %}"  type="text/javascript"></script>
-
-<script>
-    $(function(){
-        $('#jsStayBtn').on('click', function(){
-            $.ajax({
-                cache: false,
-                type: "POST",
-                url:"/org/add_ask/",
-                data:$('#jsStayForm').serialize(),
-                async: true,
-                success: function(data) {
-                    if(data.status == 'success'){
-                        $('#jsStayForm')[0].reset();
-                        alert("提交成功")
-                    }else if(data.status == 'fail'){
-                        $('#jsCompanyTips').html(data.msg)
-                    }
-                },
-            });
-        });
-    })
-
-</script>
-
 </body>
 </html>

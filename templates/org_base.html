@@ -212,11 +212,9 @@
 <script type="text/javascript" src="{% static 'js/plugins/laydate/laydate.js' %}"></script>
 <script src="{% static 'js/plugins/layer/layer.js' %}"></script>
 <script src="{% static 'js/plugins/queryCity/js/public.js' %}" type="text/javascript"></script>
-
 <script type="text/javascript" src="{% static 'js/plugins/jquery.raty.js' %}"></script>
 <script type="text/javascript">
     //收藏分享
-//收藏分享
 function add_fav(current_elem, fav_id, fav_type){
     $.ajax({
         cache: false,
@@ -244,9 +242,9 @@ function add_fav(current_elem, fav_id, fav_type){
 }
 
 $('.collectionbtn').on('click', function(){
+    alert("haha");
     add_fav($(this), {{ course_org.id }}, 2);
 });
-
 $(function(){
     var $precision = $('.precision'),
         score = $precision.attr('data-star-scope'),
@@ -283,8 +281,6 @@ $(function(){
     });
 })
 </script>
-
-
 <script type="text/javascript">
 $(function() {
     $('.recordbtn1').click(function(){
@@ -309,6 +305,5 @@ $(function() {
     });
 });
 </script>
-
 </body>
 </html>
