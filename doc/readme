@@ -34,6 +34,11 @@ base页面 class=active 判断具体选中样式
             根据用户消息表来(UserMessage)查询用户的所有消息，并分页显示,
             以及在页面heder上显示用户的所有消息数量(小喇叭),在UserProfile的Model中写了一个
             获取用户未读消息数量的一个函数，在页面调用。(get_user_unread_message_nums())
+        我的收藏：
+            机构收藏
+            课程收藏
+            讲师收藏
+
 
 
 

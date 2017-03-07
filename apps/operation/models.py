@@ -38,8 +38,6 @@ class CourseComments(models.Model):
         verbose_name_plural = verbose_name
 
 
-
-
 class UserFavorite(models.Model):
     user = models.ForeignKey(UserProfile, verbose_name=u"用户")
     fav_id = models.IntegerField(default=0, verbose_name=u"数据id")
@@ -49,8 +47,6 @@ class UserFavorite(models.Model):
     class Meta:
         verbose_name = u"用户收藏"
         verbose_name_plural = verbose_name
-
-
 
 
 class UserMessage(models.Model):

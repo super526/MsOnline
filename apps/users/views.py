@@ -6,7 +6,9 @@ from django.contrib.auth import authenticate, login
 from django.views.generic.base import View
 from django.contrib.auth.hashers import make_password
 
-from operation.models import UserCourse, UserMessage
+from courses.models import Course
+from operation.models import UserCourse, UserMessage, UserFavorite
+from organization.models import CourseOrg, Teacher
 from utils.mixin_utils import LoginRequiredMixin
 from .forms import LoginForm, RegisterForm,ForgetForm,ModifyPwdForm, UploadImageForm, UserInfoForm
 from .models import UserProfile, EmailVerifyRecord
@@ -221,6 +223,75 @@ class UserCourseView(LoginRequiredMixin,View):
         })
 
 
+class MyFavOrgView(LoginRequiredMixin,View):
+    """
+    个人中心:我的收藏，收藏机构
+    """
+    def get(self,request):
+        user = request.user
+        #根据用户和收藏的类别，来获取用户收藏的课程机构列表
+        fav_orgs = UserFavorite.objects.filter(user=user,fav_type=2)
+        #定义一个空的课程机构列表
+        org_list = []
+        #遍历用户收藏的课程机构列表，获取每个用户收藏的fav_id，即:收藏课程机构的id
+        for fav_org in  fav_orgs:
+            #根据用户收藏来获取fav_id
+            fav_id = fav_org.fav_id
+            #收藏的fav_id==org_id，根据机构id获取机构
+            org = CourseOrg.objects.get(id=fav_id)
+            #添加到课程机构列表中
+            org_list.append(org)
+        return render(request,'usercenter-fav-org.html',{
+            "org_list":org_list
+        })
+
+
+class MyFavTeacherView(LoginRequiredMixin,View):
+    """
+    个人中心:我的收藏，收藏讲师
+    """
+    def get(self,request):
+        user = request.user
+        #根据用户和收藏的类别，来获取用户收藏的课程机构列表
+        fav_teachers = UserFavorite.objects.filter(user=user,fav_type=3)
+        #定义一个空的课程讲师列表
+        teacher_list = []
+        #遍历用户收藏的课程讲师列表，获取每个用户收藏的fav_id，即:收藏课程讲师的id
+        for fav_teacher in  fav_teachers:
+            #根据用户收藏来获取fav_id
+            fav_id = fav_teacher.fav_id
+            #收藏的fav_id==org_id，根据机构id获取机构
+            teacher = Teacher.objects.get(id=fav_id)
+            #添加到课程机构列表中
+            teacher_list.append(teacher)
+        return render(request,'usercenter-fav-teacher.html',{
+            "teacher_list":teacher_list
+        })
+
+
+class MyFavCourseView(LoginRequiredMixin,View):
+    """
+    个人中心:我的收藏，收藏课程
+    """
+    def get(self,request):
+        user = request.user
+        #根据用户和收藏的类别，来获取用户收藏的课程机构列表
+        fav_courses = UserFavorite.objects.filter(user=user,fav_type=1)
+        #定义一个空的课程机构列表
+        course_list = []
+        #遍历用户收藏的课程机构列表，获取每个用户收藏的fav_id，即:收藏课程机构的id
+        for fav_course in  fav_courses:
+            #根据用户收藏来获取fav_id
+            fav_id = fav_course.fav_id
+            #收藏的fav_id==org_id，根据机构id获取机构
+            course = Course.objects.get(id=fav_id)
+            #添加到课程机构列表中
+            course_list.append(course)
+        return render(request,'usercenter-fav-course.html',{
+            "course_list":course_list
+        })
+
+
 class UserMessageView(LoginRequiredMixin,View):
     """
     个人中心:我的消息
@@ -236,3 +307,5 @@ class UserMessageView(LoginRequiredMixin,View):
         return render(request, 'usercenter-message.html', {
             "user_messages": page_messages
         })
+
+
