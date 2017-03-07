@@ -1,12 +1,17 @@
 # _*_ encoding:utf-8 _*_
+import json
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.views.generic.base import View
 from django.contrib.auth.hashers import make_password
 
-from .forms import LoginForm, RegisterForm,ForgetForm,ModifyPwdForm
+from operation.models import UserCourse, UserMessage
+from utils.mixin_utils import LoginRequiredMixin
+from .forms import LoginForm, RegisterForm,ForgetForm,ModifyPwdForm, UploadImageForm, UserInfoForm
 from .models import UserProfile, EmailVerifyRecord
 from utils.email_send import send_register_email
+from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
 
 
 # Create your views here.
@@ -67,6 +72,11 @@ class ActiveUserView(View) :
                 user = UserProfile.objects.get(email=email)
                 user.is_active = True
                 user.save()
+                #用户注册，并激活成功时，系统向用户发送一条消息
+                user_message = UserMessage()
+                user_message.user = user.id
+                user_message.message = u"欢迎注册慕学在线网，祝你学习愉快!"
+                user_message.save()
         else:
             return render(request, "active_fail.html")
         return render(request, "login.html")
@@ -116,3 +126,113 @@ class ModifyPwdView(View):
             return render(request, "password_reset.html", {"email": email,"modify_pwd_from":modify_pwd_form})
 
 
+class UserInfoView(LoginRequiredMixin,View):
+    """
+    用户个人中心
+    """
+    def get(self,request):
+        return render(request,'usercenter-info.html',{
+        })
+    def post(self,request):
+        #修改用户个人中心属性
+        user_info_form = UserInfoForm(request.POST, instance=request.user)
+        if user_info_form.is_valid():
+            user_info_form.save()
+            return HttpResponse('{"status":"success"}', content_type='application/json')
+        else:
+            return HttpResponse(json.dumps(user_info_form.errors), content_type='application/json')
+
+
+class UploadImageView(LoginRequiredMixin,View):
+    """
+    用户个人中心，用户头像上传
+    """
+    def post(self,request):
+        image_form = UploadImageForm(request.POST, request.FILES,instance=request.user)
+        if image_form.is_valid():
+            #request.user.image = image_form.cleaned_data['image']
+            #request.user.save()
+            image_form.save()
+            return HttpResponse('{"status":"success"}', content_type='application/json')
+        else:
+            return HttpResponse('{"status":"fail"}', content_type='application/json')
+
+
+class UpdatePwdView(LoginRequiredMixin,View):
+    def post(self,request):
+        modify_pwd_form = ModifyPwdForm(request.POST)
+        if modify_pwd_form.is_valid():
+            password1 = request.POST.get("password1","")
+            password2 = request.POST.get("password2","")
+            if password1 != password2:
+                return HttpResponse('{"status":"fail","msg":"两次输入不一致"}', content_type='application/json')
+            user = request.user
+            user.password = make_password(password1)
+            user.save()
+            return HttpResponse('{"status":"success"}', content_type='application/json')
+        else:
+            return HttpResponse(json.dumps(modify_pwd_form.errors), content_type='application/json')
+
+
+class SendEmailCodeView(LoginRequiredMixin,View):
+    """
+    发送邮箱验证码
+    """
+    def get(self,request):
+        #获取表单填写的邮箱
+        email = request.GET.get('email', '')
+        #判断邮箱是否存在(根据已有用户的邮箱来过滤)
+        if UserProfile.objects.filter(email=email):
+            #邮箱存在，则返回错误信息
+            return HttpResponse('{"email":"邮箱已经存在"}', content_type='application/json')
+        else:
+            #不存在，则向修改的邮箱发送邮箱验证码
+            send_register_email(email,"update")
+            return HttpResponse('{"status":"success"}', content_type='application/json')
+
+
+class UpdateEmailView(LoginRequiredMixin,View):
+    def post(self,request):
+        #获取邮箱
+        email = request.POST.get('email', '')
+        #获取验证码
+        code = request.POST.get('code', '')
+        #在邮箱验证码记录表中查询当前：邮箱、验证码、发送类型是否有匹配记录
+        existed_records = EmailVerifyRecord.objects.filter(email=email,code=code,send_type="update")
+        #若存在 则表示验证码正确，修改当前用户的邮箱
+        if existed_records:
+            user = request.user
+            user.email = email
+            user.save()
+            return HttpResponse('{"status":"success"}', content_type='application/json')
+        else:
+            return HttpResponse('{"email":"验证码错误"}', content_type='application/json')
+
+
+class UserCourseView(LoginRequiredMixin,View):
+    """
+    个人中心:我的课程
+    """
+    def get(self,request):
+        user = request.user
+        user_courses = UserCourse.objects.filter(user=user)
+        return render(request,'usercenter-mycourse.html',{
+            "user_courses":user_courses
+        })
+
+
+class UserMessageView(LoginRequiredMixin,View):
+    """
+    个人中心:我的消息
+    """
+    def get(self,request):
+        user_messages = UserMessage.objects.filter(user=request.user.id)
+        try:
+            page = request.GET.get('page', 1)
+        except PageNotAnInteger:
+            page = 1
+        p = Paginator(user_messages, 3, request=request)
+        page_messages = p.page(page)
+        return render(request, 'usercenter-message.html', {
+            "user_messages": page_messages
+        })

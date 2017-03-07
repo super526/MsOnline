@@ -54,6 +54,7 @@ class Teacher(models.Model):
     work_position = models.CharField(max_length=50, verbose_name=u"公司职位")
     points = models.CharField(max_length=50, verbose_name=u"教学特点")
     click_nums = models.IntegerField(default=0, verbose_name=u"点击数")
+    age = models.IntegerField(default=28, verbose_name=u"年龄")
     image = models.ImageField(default='',upload_to="teacher/%Y/%m", verbose_name=u"教师头像", max_length=100)
     fav_nums = models.IntegerField(default=0, verbose_name=u"收藏数")
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u"添加时间")
@@ -61,6 +62,10 @@ class Teacher(models.Model):
     class Meta:
         verbose_name = u"教师"
         verbose_name_plural = verbose_name
+    #获取课程讲师的所有课程 根据课程中教师的外键关联
+
+    def get_teacher_course(self):
+        return self.course_set.all()
 
     def __unicode__(self):
         return self.name

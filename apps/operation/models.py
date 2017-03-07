@@ -37,8 +37,7 @@ class CourseComments(models.Model):
         verbose_name = u"课程评论"
         verbose_name_plural = verbose_name
 
-    def __unicode__(self):
-        return self.name
+
 
 
 class UserFavorite(models.Model):
@@ -51,8 +50,7 @@ class UserFavorite(models.Model):
         verbose_name = u"用户收藏"
         verbose_name_plural = verbose_name
 
-    def __unicode__(self):
-        return self.name
+
 
 
 class UserMessage(models.Model):
@@ -66,7 +64,7 @@ class UserMessage(models.Model):
         verbose_name_plural = verbose_name
 
     def __unicode__(self):
-        return self.name
+        return self.message
 
 
 class UserCourse(models.Model):
@@ -78,5 +76,3 @@ class UserCourse(models.Model):
         verbose_name = u"用户课程"
         verbose_name_plural = verbose_name
 
-    def __unicode__(self):
-        return self.name

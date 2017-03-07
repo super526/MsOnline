@@ -21,6 +21,15 @@ class UserProfile(AbstractUser):
         verbose_name = "用户信息"
         verbose_name_plural = verbose_name
 
+    def get_user_learn_course(self):
+        #获取当前用户学习的课程
+        return self.usercourse_set.all()
+
+    def get_user_unread_message_nums(self):
+        #获取用户的未读消息数量
+        from operation.models import UserMessage
+        return UserMessage.objects.filter(user=self.id).count()
+
     def __unicode__(self):
         return self.username
 
@@ -28,7 +37,7 @@ class UserProfile(AbstractUser):
 class EmailVerifyRecord(models.Model):
     code = models.CharField(max_length=20, verbose_name=u"验证码")
     email = models.EmailField(max_length=50, verbose_name=u"邮箱")
-    send_type = models.CharField(verbose_name=u"验证类型",choices=(("register", u"注册"), ("forget", u"找回密码")), max_length=10)
+    send_type = models.CharField(verbose_name=u"验证类型",choices=(("register", u"注册"), ("forget", u"找回密码"),("update",u"修改邮箱")), max_length=10)
     send_time = models.DateTimeField(verbose_name=u"发送时间",default=datetime.now)
 
     class Meta:

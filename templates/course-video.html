@@ -71,7 +71,7 @@
                                 <ul class="video">
                                     {% for video in lesson.get_lesson_video %}
                                     <li>
-                                        <a target="_blank" href='{{ video.url }}' class="J-media-item studyvideo">{{ video.name }}({{ video.learn_time }})
+                                        <a target="_blank" href="{% url 'course:video_play' video.id %}" class="J-media-item studyvideo">{{ video.name }}({{ video.learn_time }})
                                             <i class="study-state"></i>
                                         </a>
                                     </li>
@@ -124,12 +124,14 @@
                                 <div class="cp-tab-pannel js-comp-tab-pannel" data-pannel="course" style="display: block">
                                     <!-- img 200 x 112 -->
                                     <ul class="other-list">
-                                        <li class="curr">
-                                            <a href="course-detail.html" target="_blank">
-                                                <img src="../media/courses/2016/11/540e57300001d6d906000338-240-135_n0L8vbw.jpg" alt="django与vuejs实战项目2">
-                                                <span class="name autowrap">django与vuejs实战项目2</span>
-                                            </a>
-                                        </li>
+                                        {% for relate_course in relate_courses %}
+                                            <li class="curr">
+                                                <a href="{% url 'course:course_detail' relate_course.id %}" target="_blank">
+                                                    <img src="{{ MEDIA_URL }}{{ relate_course.image }}" alt="{{ relate_course.name }}">
+                                                    <span class="name autowrap">{{ relate_course.name }}</span>
+                                                </a>
+                                            </li>
+                                         {% endfor %}
                                     </ul>
                                 </div>
                                 <div class="cp-tab-pannel js-comp-tab-pannel" data-pannel="plan">

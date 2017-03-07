@@ -138,10 +138,10 @@ STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 EMAIL_HOST = "smtp.sina.com"
 EMAIL_PORT = 25
-EMAIL_HOST_USER = "supan_ztt@sina.com"
-EMAIL_HOST_PASSWORD = "suztt526"
+EMAIL_HOST_USER = "supan_ztt@sina.cn"
+EMAIL_HOST_PASSWORD = "suztt526@520"
 EMAIL_USE_TLS = False
-EMAIL_FROM = "supan_ztt@sina.com"
+EMAIL_FROM = "supan_ztt@sina.cn"
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')

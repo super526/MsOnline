@@ -1,5 +1,6 @@
 # _*_ coding:utf-8 _*_
-from courses.views import CourseListView, CourseDetailView, CourseInfoView, CourseCommentView, AddCourseCommentView
+from courses.views import CourseListView, CourseDetailView, CourseInfoView, CourseCommentView, AddCourseCommentView, \
+    VideoPlayView
 
 __author__ = 'supan'
 __date__ = '2017/2/21 20:41'
@@ -17,5 +18,7 @@ urlpatterns = [
     url(r'^comment/(?P<course_id>\d+)/$', CourseCommentView.as_view(), name="course_comment"),
     #用户添加课程评论
     url(r'^add_comment/$', AddCourseCommentView.as_view(), name="add_comment"),
+    #课程视频
+    url(r'^video/(?P<video_id>\d+)/$', VideoPlayView.as_view(), name="video_play"),
 
 ]

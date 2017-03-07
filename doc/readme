@@ -1,0 +1,39 @@
+讲师模块的功能开发:
+    获取教师列表
+        按照全部、人气排序
+        分页
+    讲师详情页
+        实现收藏功能:对讲师的收藏、对课程机构的收藏
+        讲师所有课程
+        讲师排行榜:根据讲师的点击数来筛选
+base页面 class=active 判断具体选中样式
+    根据请求的url来做判断
+        request.path|slice:'7' == '/course'
+        request.path得到请求的相对路径
+全局搜索功能的开发:
+    获取页面传入的keywords关键字，用于过滤列表页面查询出来的列表(all_courses、all_orgs、all_teachers)
+
+个人中心模块:
+    将6个页面加入项目中，并实现一个用户个人中心用于继承的:usercenter-base.html页面，
+    在全局的urls中添加users的url路由转发，
+    在users的urls中添加一个url跳转到usercenter-info.html页面，并在views中添加相应的视图UserInfoView
+
+    个人中心模块:
+        个人资料的修改:
+        头像、
+        密码、
+        邮箱(点击修改时,在弹出的表单中:
+               1:填写的新的邮箱不能为系统用户使用的邮箱，
+               2:邮箱需要获取新的验证码来验证  发送验证码、验证验证码)
+        其余用户属性：
+                通过ModelForm(UserInfoForm)来完成校验(页面传入的日期字符类型，ModelForm自动转换为相应的日期类型)和保存
+
+        我的课程：
+            根据用户课程表(UserCourse)来查询当前用户所学习的课程
+        我的消息：
+            根据用户消息表来(UserMessage)查询用户的所有消息，并分页显示,
+            以及在页面heder上显示用户的所有消息数量(小喇叭),在UserProfile的Model中写了一个
+            获取用户未读消息数量的一个函数，在页面调用。(get_user_unread_message_nums())
+
+
+
