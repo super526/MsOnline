@@ -1,19 +1,22 @@
 # _*_ encoding:utf-8 _*_
 import json
-from django.http import HttpResponse
-from django.shortcuts import render
-from django.contrib.auth import authenticate, login
-from django.views.generic.base import View
+
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.hashers import make_password
+from django.core.urlresolvers import reverse
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.views.generic.base import View
+from pure_pagination import Paginator, PageNotAnInteger
 
 from courses.models import Course
 from operation.models import UserCourse, UserMessage, UserFavorite
 from organization.models import CourseOrg, Teacher
+from utils.email_send import send_register_email
 from utils.mixin_utils import LoginRequiredMixin
 from .forms import LoginForm, RegisterForm,ForgetForm,ModifyPwdForm, UploadImageForm, UserInfoForm
-from .models import UserProfile, EmailVerifyRecord
-from utils.email_send import send_register_email
-from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
+from .models import UserProfile, EmailVerifyRecord, Banner
 
 
 # Create your views here.
@@ -31,13 +34,23 @@ class LoginView(View):
             if user is not None:
                 if user.is_active: #判断用户是否为激活状态
                     login(request, user)
-                    return render(request, "index.html")
+                    return HttpResponseRedirect(reverse("index"))
                 else:
                     return render(request, "login.html", {"msg": "用户未激活"})
             else:
                 return render(request, "login.html", {"msg": "用户名或密码错误"})
         else:
             return render(request, "login.html", {"login_form": login_form})
+
+
+class LogoutView(View):
+    """
+    用户退出
+    """
+
+    def get(self, request):
+        logout(request)
+        return HttpResponseRedirect(reverse("index"))
 
 
 class RegisterView(View):
@@ -298,6 +311,13 @@ class UserMessageView(LoginRequiredMixin,View):
     """
     def get(self,request):
         user_messages = UserMessage.objects.filter(user=request.user.id)
+        # 用户进入个人中心-->个人消息后清空未读消息的记录
+        # 1.获取当前用户的未读消息列表
+        all_unread_messages = UserMessage.objects.filter(user=request.user.id, has_read=False)
+        # 遍历未读消息列表，把消息未读状态设置为已读,并保存
+        for unread_message in all_unread_messages:
+            unread_message.has_read = True
+            unread_message.save()
         try:
             page = request.GET.get('page', 1)
         except PageNotAnInteger:
@@ -309,3 +329,61 @@ class UserMessageView(LoginRequiredMixin,View):
         })
 
 
+class IndexView(View):
+    """
+    系统首页
+    """
+
+    def get(self, request):
+        # print 1/0
+        # 获取轮播图，按顺序排列
+        all_banners = Banner.objects.all().order_by('index')
+        # 获取课程
+        courses = Course.objects.filter(is_banner=False)[:6]
+        # 获取轮播课程 广告页面
+        banner_courses = Course.objects.filter(is_banner=True)[:3]
+        # 获取课程机构
+        course_orgs = CourseOrg.objects.all()[:15]
+
+        return render(request, 'index.html', {
+            'all_banners': all_banners,
+            "courses": courses,
+            "banner_courses": banner_courses,
+            "course_orgs": course_orgs
+        })
+
+
+def page_not_found(request):
+    """
+    全局404页面处理函数
+    :param request:
+    :return:
+    """
+    from django.shortcuts import render_to_response
+    response = render_to_response('404.html', {})
+    response.status_code = 404
+    return response
+
+
+def page_error(request):
+    """
+    全局500页面处理函数
+    :param request:
+    :return:
+    """
+    from django.shortcuts import render_to_response
+    response = render_to_response('500.html', {})
+    response.status_code = 500
+    return response
+
+
+def page_resource_unavailable(request):
+    """
+    全局403页面处理函数
+    :param request:
+    :return:
+    """
+    from django.shortcuts import render_to_response
+    response = render_to_response('403.html', {})
+    response.status_code = 403
+    return response

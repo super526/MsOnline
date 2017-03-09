@@ -1,5 +1,6 @@
 # _*_ encoding:utf-8 _*_
 from __future__ import unicode_literals
+
 from datetime import datetime
 
 from django.db import models
@@ -27,6 +28,7 @@ class CourseOrg(models.Model):
     category = models.CharField(default="pxjg",verbose_name=u"机构类别",max_length=20,choices=(("pxjg","培训机构"),("gr","个人"),("gx","高校")))
     click_nums = models.IntegerField(default=0, verbose_name=u"点击数")
     fav_nums = models.IntegerField(default=0, verbose_name=u"收藏数")
+    tag = models.CharField(max_length=10, verbose_name=u"机构标签", default="全国知名")
     image = models.ImageField(upload_to="org/%Y/%m", verbose_name=u"logo", max_length=100)
     address = models.CharField(max_length=150, verbose_name=u"机构地址")
     students = models.IntegerField(default=0, verbose_name=u"学习人数")
@@ -62,10 +64,13 @@ class Teacher(models.Model):
     class Meta:
         verbose_name = u"教师"
         verbose_name_plural = verbose_name
-    #获取课程讲师的所有课程 根据课程中教师的外键关联
 
+    #获取课程讲师的所有课程 根据课程中教师的外键关联
     def get_teacher_course(self):
         return self.course_set.all()
+
+    def get_teacher_course_count(self):
+        return self.course_set.all().count()
 
     def __unicode__(self):
         return self.name

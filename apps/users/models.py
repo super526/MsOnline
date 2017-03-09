@@ -1,9 +1,10 @@
 # _*_ encoding:utf-8 _*_
 from __future__ import unicode_literals
+
 from datetime import datetime
 
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 
 
 # Create your models here.
@@ -26,9 +27,9 @@ class UserProfile(AbstractUser):
         return self.usercourse_set.all()
 
     def get_user_unread_message_nums(self):
-        #获取用户的未读消息数量
+        # 获取用户的未读消息数量,显示在页面导航栏
         from operation.models import UserMessage
-        return UserMessage.objects.filter(user=self.id).count()
+        return UserMessage.objects.filter(user=self.id, has_read=False).count()
 
     def __unicode__(self):
         return self.username

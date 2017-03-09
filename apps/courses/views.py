@@ -1,15 +1,11 @@
 # _*_ encoding:utf-8 _*_
-from django.core.paginator import PageNotAnInteger
 from django.db.models import Q
 from django.http import HttpResponse
 from django.shortcuts import render
-
-# Create your views here.
 from django.views.generic import View
+from pure_pagination import Paginator, PageNotAnInteger
 
 from courses.models import Course, CourseResource, Video
-from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
-
 from operation.models import UserFavorite, CourseComments, UserCourse
 from utils.mixin_utils import LoginRequiredMixin
 
@@ -91,6 +87,9 @@ class CourseInfoView(LoginRequiredMixin,View):
 
     def get(self, request, course_id):
         course_detail = Course.objects.get(id=int(course_id))
+        # 每点击一次开始学习 课程学习人数+1
+        course_detail.students += 1
+        course_detail.save()
         course_resource = CourseResource.objects.filter(course=course_detail)
         #查询用户是否已经关联了该课程
         user_course = UserCourse.objects.filter(user=request.user, course=course_detail)

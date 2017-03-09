@@ -1,11 +1,10 @@
 # _*_ encoding:utf-8 _*_
 from __future__ import unicode_literals
+
 from datetime import datetime
 
 from django.db import models
 
-
-# Create your models here.
 from organization.models import CourseOrg, Teacher
 
 
@@ -19,6 +18,7 @@ class Course(models.Model):
     learn_time = models.IntegerField(default=0, verbose_name=u"学习时长(分钟表示)")
     students = models.IntegerField(default=0, verbose_name=u"学习人数")
     fav_nums = models.IntegerField(default=0, verbose_name=u"收藏人数")
+    is_banner = models.BooleanField(default=False, verbose_name=u"是否为课程轮播图")
     image = models.ImageField(upload_to="courses/%Y/%m", verbose_name=u"封面图", max_length=100)
     category = models.CharField(default=u"后端开发", max_length=20,verbose_name=u"课程类别")
     click_nums = models.IntegerField(default=0, verbose_name=u"点击数")
