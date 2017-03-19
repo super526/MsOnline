@@ -111,12 +111,15 @@
 					</ul>
 				</div>
 				<div class="tab_cont tab_cont1">
-					<p>{{ course_detail.name }}</p>
+					<p>
+                        {% autoescape off %}
+                            {{ course_detail.detail }}
+                        {% endautoescape %}
+                    </p>
 				</div>
 				<div class="tab_cont tab_cont2" >
 					<div class="comment">
 						<div class="comenlist">
-                            {{ course_detail.desc }}
 	                    </div>
 					</div>
 				</div>
@@ -127,7 +130,7 @@
                     {% for relate_course in relate_course %}
                          <dl>
                             <dt>
-                                <a target="_blank" href="">
+                                <a target="_blank" href="{% url 'course:course_detail' relate_course.id %}">
                                     <img width="240" height="220" class="scrollLoading" src="{{ MEDIA_URL }}{{ relate_course.image }}"/>
                                 </a>
                             </dt>

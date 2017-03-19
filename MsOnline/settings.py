@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.join(BASE_DIR, 'extra_apps'), )
 SECRET_KEY = 'q94bnrxa97xr3q#lt(l)l&7+1ayn2l39uxw@14buhnf%@e+kb!'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'captcha',
     'pure_pagination',
+    'DjangoUeditor',
 
 ]
 AUTH_USER_MODEL = "users.UserProfile"
@@ -136,7 +137,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
 
-EMAIL_HOST = "smtp.sina.com"
+EMAIL_HOST = "smtp.sina.cn"
 EMAIL_PORT = 25
 EMAIL_HOST_USER = "supan_ztt@sina.cn"
 EMAIL_HOST_PASSWORD = "suztt526@520"
@@ -146,4 +147,4 @@ EMAIL_FROM = "supan_ztt@sina.cn"
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')

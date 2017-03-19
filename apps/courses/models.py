@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from datetime import datetime
 
+from DjangoUeditor.models import UEditorField
 from django.db import models
 
 from organization.models import CourseOrg, Teacher
@@ -12,7 +13,8 @@ class Course(models.Model):
     course_org = models.ForeignKey(CourseOrg,verbose_name=u"课程机构",null=True)
     name = models.CharField(max_length=50, verbose_name=u"课程名")
     desc = models.CharField(max_length=300, verbose_name=u"课程描述")
-    detail = models.TextField(verbose_name=u"课程详情")
+    detail = UEditorField(verbose_name=u'课程详情',width=600, height=300,imagePath="courses/ueditor/", filePath="courses/ueditor/",
+             default="")
     teacher  = models.ForeignKey(Teacher,verbose_name=u"课程讲师",null=True,blank=True)
     degree = models.CharField(max_length=5, choices=(("cj", u"初级"), ("zj", u"中级"), ("gj", u"高级")), verbose_name=u"课程等级")
     learn_time = models.IntegerField(default=0, verbose_name=u"学习时长(分钟表示)")
@@ -34,6 +36,12 @@ class Course(models.Model):
     def get_lesson_count(self):
         #获取课程的章节数 根据课程章节Lesson的course外键关联
         return self.lesson_set.all().count()
+    get_lesson_count.short_description = u"章节数"
+
+    def go_to(self):
+        from django.utils.safestring import mark_safe
+        return mark_safe("<a href=''>跳转</a>")
+    go_to.short_description = u"课程详情"
 
     #获取课程章节信息 根据课程章节Lesson与Course的外键关联
     def get_course_lesson(self):
@@ -45,6 +53,17 @@ class Course(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class BannerCourse(Course):
+    """
+    轮播课程,实现同一个model注册两个管理器
+    """
+    class Meta:
+        verbose_name = u"轮播课程"
+        verbose_name_plural = verbose_name
+        #关键参数 不会设置一张表，只会为它注入不同的数据
+        proxy = True
 
 
 class Lesson(models.Model):

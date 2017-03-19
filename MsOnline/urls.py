@@ -19,9 +19,9 @@ from django.conf.urls import url, include
 from django.views.static import serve
 
 import xadmin
-from MsOnline.settings import MEDIA_ROOT, STATIC_ROOT
-from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetPwdView, ModifyPwdView, IndexView
-from xadmin.views import LogoutView
+from MsOnline.settings import MEDIA_ROOT
+from users.views import LoginView, RegisterView, ActiveUserView, ForgetPwdView, ResetPwdView, ModifyPwdView, IndexView, \
+    LogoutView
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
@@ -41,10 +41,11 @@ urlpatterns = [
     # 配置上传文件的访问处理函数
     url(r'^media/(?P<path>.*)$',serve, {"document_root":MEDIA_ROOT}),
     # 配置static访问处理函数 debug:False时 自动配置失效
-    url(r'^static/(?P<path>.*)$', serve, {"document_root": STATIC_ROOT}),
+    #url(r'^static/(?P<path>.*)$', serve, {"document_root": STATIC_ROOT}),
     #用户相关模块url配置
     url(r'^users/', include('users.urls',namespace="users")),
-
+    #配置富文本编辑器相关url
+    url(r'^ueditor/',include('DjangoUeditor.urls' )),
 ]
 
 # 全局404页面配置
